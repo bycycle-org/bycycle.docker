@@ -1,0 +1,35 @@
+version: "3"
+
+networks:
+    bycycle:
+        external: true
+
+volumes:
+    bycycle-postgres-data:
+        external: true
+
+services:
+    postgres:
+        image: mdillon/postgis:10-alpine
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+        networks:
+            - bycycle
+        ports:
+            - 5432:5432
+        volumes:
+            - bycycle-postgres-data:/var/lib/postgresql/data
+
+    graph-server:
+        build:
+            context: ../
+            dockerfile: bycycle.docker/bycycle-graph-server/Dockerfile
+        networks:
+            - bycycle
+        ports:
+            - 8000:8000
+        volumes:
+            - ../bycycle.core:/project/src/bycycle.core
+            - ../Dijkstar:/project/src/Dijkstar
+            - ../graph.marshal:/project/data/graph.marshal
