@@ -2,37 +2,26 @@ FROM python:3.7-slim
 
 ENV DEBUG true
 ENV GRAPH_FILE /project/data/graph.marshal
-ENV COST_FUNC bycycle.core.service.route.cost:cost_func
-ENV PATH /project/.poetry/bin:$PATH
+ENV COST_FUNC dijkstar_cost:cost_func
 
 RUN mv /etc/localtime /etc/localtime.orig
 RUN ln -s /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
 
-RUN apt-get update
-RUN apt-get upgrade
-RUN apt-get -y install curl gcc
+RUN apt-get -y update
+RUN apt-get -y upgrade
+RUN apt-get -y install gcc
+RUN rm -rf /var/lib/apt/lists/*
 
 RUN adduser --disabled-password --gecos Project --home /project project
 
 USER project
 
-WORKDIR /project
+RUN python -m venv /project
+RUN . /project/bin/activate && pip install --no-cache-dir --no-compile --upgrade pip setuptools
+RUN . /project/bin/activate && pip install --no-compile Dijkstar[server]==3.0a4
 
-RUN curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
-
-RUN python -m venv .
-
+COPY --chown=project bycycle.core/bycycle/core/service/route/cost.py /project/lib/python3.7/site-packages/dijkstar_cost.py
 COPY --chown=project graph.marshal /project/data/
-COPY --chown=project bycycle.core /project/src/bycycle.core/
-COPY --chown=project Dijkstar /project/src/Dijkstar/
-
-RUN . /project/bin/activate && pip install --no-cache-dir --upgrade pip setuptools
-
-WORKDIR /project/src/bycycle.core
-RUN . /project/bin/activate && poetry install --no-dev
-
-WORKDIR /project/src/Dijkstar
-RUN . /project/bin/activate && pip install --editable .[server]
 
 WORKDIR /project
 

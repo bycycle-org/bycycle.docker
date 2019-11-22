@@ -30,6 +30,4 @@ services:
         ports:
             - 8000:8000
         volumes:
-            - ../bycycle.core:/project/src/bycycle.core
-            - ../Dijkstar:/project/src/Dijkstar
             - ../graph.marshal:/project/data/graph.marshal
