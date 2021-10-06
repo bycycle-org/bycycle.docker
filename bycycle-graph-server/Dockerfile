@@ -1,4 +1,4 @@
-FROM python:3.7-slim
+FROM python:3.8-slim
 
 ENV DEBUG true
 ENV GRAPH_FILE /project/data/graph.marshal
@@ -20,7 +20,7 @@ RUN python -m venv /project
 RUN . /project/bin/activate && pip install --no-cache-dir --no-compile --upgrade pip setuptools
 RUN . /project/bin/activate && pip install --no-compile Dijkstar[server]==3.0a4
 
-COPY --chown=project bycycle.core/bycycle/core/service/route/cost.py /project/lib/python3.7/site-packages/dijkstar_cost.py
+COPY --chown=project bycycle.core/bycycle/core/service/route/cost.py /project/lib/python3.8/site-packages/dijkstar_cost.py
 COPY --chown=project graph.marshal /project/data/
 
 WORKDIR /project
