@@ -10,7 +10,8 @@ volumes:
 
 services:
     postgres:
-        image: postgis/postgis:12-3.1-alpine
+        build:
+            dockerfile: bycycle-postgres/Dockerfile
         environment:
             - POSTGRES_USER=postgres
             - POSTGRES_PASSWORD=postgres
